@@ -2,3 +2,4 @@ python-dotenv
 nvdlib
 discord
 argparse
+apscheduler
