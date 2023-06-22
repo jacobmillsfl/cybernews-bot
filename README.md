@@ -41,3 +41,9 @@ Then, run the app:
 ```
 python3 src/cybernewsapp.py
 ```
+
+## Access Tokens
+
+- To use the news api, you will need to [register an account on newsapi.org](https://newsapi.org/register).
+
+- To create a discord bot and receive a discord token, you will need to [create a new Discord application](https://discord.com/developers/applications).
