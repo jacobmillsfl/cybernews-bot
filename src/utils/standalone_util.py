@@ -1,4 +1,7 @@
 from .news_api import NewsApi
+from models.cve_data import Description, CVSSMetric, Weakness, Reference, CWE, Vulnerability
+from models.news_data import Source, Article, NewsData
+import json
 
 class StandaloneUtil:
     """
@@ -10,6 +13,7 @@ class StandaloneUtil:
 1) Latest CVEs
 2) Hackernews stories
 3) Techcrunch stories
+4) quit
 
 Enter a command: """
 
@@ -22,12 +26,24 @@ Enter a command: """
             command = input(self.menu)
             
             if command == "1":
-                print(self.news_api.get_cves())
+                data = self.news_api.get_cves()
+                vulns = []
+                for vuln in data:
+                    vulns.append(Vulnerability(vuln.__dict__))
+                for vuln in vulns:
+                    print(vuln)
+                    print()
             elif command == "2":
-                print(self.news_api.get_hackernews())
+                data = self.news_api.get_hackernews()
+                news = NewsData(data)
+                for article in news.articles:
+                    print(article)
             elif command == "3":
-                print(self.news_api.get_techcrunch())
-            elif command == "quit":
+                data = self.news_api.get_techcrunch()
+                news = NewsData(data)
+                for article in news.articles:
+                    print(article)
+            elif command in ["4","quit"]:
                 break
             else:
                 print("Invalid command")
