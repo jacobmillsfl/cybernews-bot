@@ -25,7 +25,9 @@ cat > .cybernews.env << EOF
 NEWS_API_KEY=""
 DISCORD_TOKEN=""
 DISCORD_GUILD=""
-DISCORD_CHANNEL=""
+DISCORD_CHANNEL_CVES=""
+DISCORD_CHANNEL_TECHCRUNCH=""
+DISCORD_CHANNEL_HACKERNEWS=""
 EOF
 ```
 That's it! You can now run the application.

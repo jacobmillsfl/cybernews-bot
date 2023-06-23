@@ -2,13 +2,14 @@ from .news_api import NewsApi
 from models.cve_data import Description, CVSSMetric, Weakness, Reference, CWE, Vulnerability
 from models.news_data import Source, Article, NewsData
 import json
+from datetime import date, datetime
 
 class StandaloneUtil:
     """
     Discord API helper
     """
-    def __init__(self, news_api: NewsApi):
-        self.news_api = news_api
+    def __init__(self, config: dict):
+        self.news_api = NewsApi(config)
         self.menu = """
 1) Latest CVEs
 2) Hackernews stories
@@ -36,13 +37,25 @@ Enter a command: """
             elif command == "2":
                 data = self.news_api.get_hackernews()
                 news = NewsData(data)
+                todays_news = []
                 for article in news.articles:
-                    print(article)
+                    article_date = article.published_at.split("T")[0]
+                    current_date = str(date.today())
+
+                    if article_date == current_date:
+                        todays_news.append(article)
+                print(todays_news)
             elif command == "3":
                 data = self.news_api.get_techcrunch()
                 news = NewsData(data)
+                todays_news = []
                 for article in news.articles:
-                    print(article)
+                    article_date = article.published_at.split("T")[0]
+                    current_date = str(date.today())
+
+                    if article_date == current_date:
+                        todays_news.append(article)
+                print(todays_news)
             elif command in ["4","quit"]:
                 break
             else:

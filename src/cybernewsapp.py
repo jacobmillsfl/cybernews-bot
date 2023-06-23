@@ -6,10 +6,6 @@ from utils.news_api import NewsApi
 
 if __name__ == "__main__":
     config = dotenv_values(".cybernews.env")
-    NEWS_API_KEY = config.get("NEWS_API_KEY")
-    DISCORD_AUTH_TOKEN = config.get("DISCORD_AUTH_TOKEN")
-    DISCORD_GUILD = config.get("DISCORD_GUILD")
-    DISCORD_CHANNEL_ID = config.get("DISCORD_CHANNEL_ID")
 
     command_parser = argparse.ArgumentParser(
         prog="Cybersecurity News App",
@@ -26,14 +22,20 @@ if __name__ == "__main__":
         "--discord", action="store_true", help="Run the app in Discord mode"
     )
 
+    command_parser.add_argument(
+        "--debug", action="store_true", help="Run the app in Debug mode"
+    )
+
     args = command_parser.parse_args()
-    news_api = NewsApi(config)
+
+    config["discord"] = args.discord
+    config["debug"] = args.debug
 
     if args.discord:
         print("Running in Discord mode")
-        bot = DiscordUtil(config, news_api)
+        bot = DiscordUtil(config)
     else:
-        bot = StandaloneUtil(news_api)
+        bot = StandaloneUtil(config)
 
     # Once implemented within discord_util.py & standalone_util.py, enable bot.run()
     bot.run()

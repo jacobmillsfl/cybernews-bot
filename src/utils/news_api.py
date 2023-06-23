@@ -29,11 +29,16 @@ class NewsApi:
     def get_techcrunch(self):
         return self.get_news(self.url_techcrunch)
 
-    def get_cves(self):
+    def get_cves(self, limit=None):
         end = datetime.datetime.now()
         start = end - datetime.timedelta(days=1)
         results = nvdlib.searchCVE(pubStartDate=start, pubEndDate=end)
-        severe_results = list(filter(lambda x: x.score and x.score[1], results))
-        top_three = sorted(severe_results, key=lambda x: x.score[1], reverse=True)[:3]
+        severe_results = list(filter(lambda x: "v31severity" in x and x.v31severity == "CRITICAL", results))
+        #severe_results = list(filter(lambda x: x.score and x.score[1], results))
 
-        return top_three
+        if limit:
+            cves = sorted(severe_results, key=lambda x: x.score[1], reverse=True)[:limit]
+        else:
+            cves = sorted(severe_results, key=lambda x: x.score[1], reverse=True)
+
+        return cves
