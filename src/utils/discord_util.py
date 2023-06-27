@@ -1,5 +1,7 @@
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 import discord
+import logging
+import logging.handlers
 from discord.ext import commands
 from datetime import date, datetime
 from typing import List
@@ -19,6 +21,7 @@ class DiscordUtil:
         self.DISCORD_CHANNEL_TECHCRUNCH = int(config.get("DISCORD_CHANNEL_TECHCRUNCH"))
         self.DISCORD_CHANNEL_HACKERNEWS = int(config.get("DISCORD_CHANNEL_HACKERNEWS"))
         self.debug = config.get("debug")
+        self.logger = logging.getLogger('discord')
 
         self.bot = commands.Bot(command_prefix='!', intents=discord.Intents.default())
         self.scheduler = AsyncIOScheduler()
@@ -55,10 +58,18 @@ class DiscordUtil:
 
         # Get CVE data
         #count = 3
+        self.logger.info("Searching for latest CVEs...")
         data = self.news_api.get_cves()
         vulns : List[Vulnerability] = []
         for vuln in data:
             vulns.append(Vulnerability(vuln.__dict__))
+
+        self.logger.info("%d new CVEs found!", len(vulns))
+
+        if len(vulns) == 0:
+            channel = self.bot.get_channel(self.DISCORD_CHANNEL_CVES)
+            message = f":shield: No new CVEs reported for {str(date.today())}"
+            await channel.send(message)
 
         # Create embeds        
         for vuln in vulns:
@@ -116,7 +127,7 @@ class DiscordUtil:
     def run(self):
         @self.bot.event
         async def on_ready():
-            print('Bot is ready')
+            self.logger.info("Bot is ready")
             await self.schedule_daily_post()
 
         self.bot.run(self.token)
